@@ -19,7 +19,7 @@ func NewRateLimiterUtil(redis *redis.Client) *RateLimiterUtil {
 	return &RateLimiterUtil{
 		Redis:      redis,
 		MaxRequest: 1,
-		Duration:   time.Second * 10,
+		Duration:   time.Second * 1,
 	}
 }
 

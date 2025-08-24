@@ -20,4 +20,4 @@ Content-Type: application/json
 ###
 
 GET http://localhost:3000/api/users/_current
-Authorization: 3b73482e-37fd-41b3-8af9-63623f05a23b
+Authorization: 550e8400-e29b-41d4-a716-446655440092
