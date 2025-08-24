@@ -1,17 +1,20 @@
 package config
 
 import (
-	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
-	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"golang-clean-architecture/internal/delivery/http"
 	"golang-clean-architecture/internal/delivery/http/middleware"
 	"golang-clean-architecture/internal/delivery/http/route"
 	"golang-clean-architecture/internal/gateway/messaging"
 	"golang-clean-architecture/internal/repository"
 	"golang-clean-architecture/internal/usecase"
+	"golang-clean-architecture/internal/util"
+
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+
 	"gorm.io/gorm"
 )
 
@@ -51,8 +54,12 @@ func Bootstrap(config *BootstrapConfig) {
 	contactController := http.NewContactController(contactUseCase, config.Log)
 	addressController := http.NewAddressController(addressUseCase, config.Log)
 
+	// setup redis & rate limiter
+	redisClient := NewRedis()
+	rateLimiterUtil := util.NewRateLimiterUtil(redisClient)
+
 	// setup middleware
-	authMiddleware := middleware.NewAuth(userUseCase)
+	authMiddleware := middleware.NewAuth(userUseCase, rateLimiterUtil)
 
 	routeConfig := route.RouteConfig{
 		App:               config.App,
